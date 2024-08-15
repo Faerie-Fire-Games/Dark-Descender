@@ -4,17 +4,93 @@ using UnityEngine;
 
 public class StandardMovement : MonoBehaviour
 {
+    public float speed = 5f;
+
+    public Vector2 moveTo;
+
+    [SerializeField] private LayerMask layerMask = 3;
+    private RaycastHit2D pathRay;
+    private RaycastHit2D wallRay;
+
+    public bool facingRight = true;
+    public float bodyWidth;
 
 
 
-    void Start()
+    public virtual void Start()
     {
-        
+        bodyWidth /= 2;
+
+        moveTo = FindFurthestPoint();
     }
 
-    // Update is called once per frame
-    void Update()
+    public virtual Vector2 FindFurthestPoint()
     {
-        
+        pathRay = Physics2D.Raycast(gameObject.transform.position, Vector2.right, Mathf.Infinity, layerMask);
+        var pointA = pathRay.point;
+        var distanceA = Vector2.Distance(pathRay.point, transform.position);
+
+        pathRay = Physics2D.Raycast(gameObject.transform.position, Vector2.left, Mathf.Infinity, layerMask);
+        var pointB = pathRay.point;
+        var distanceB = Vector2.Distance(pathRay.point, transform.position);
+
+        if (distanceA >= distanceB)
+        {
+            return pointA;
+        }
+        else
+        {
+            return pointB;
+        }
+    }
+
+    public virtual bool InFrontOfWall()
+    {
+        if(facingRight)
+        {
+            wallRay = Physics2D.Raycast(gameObject.transform.position, Vector2.right, bodyWidth + 0.1f, layerMask);
+            if (wallRay.collider != null && wallRay.collider.gameObject.CompareTag("Solid"))
+            {
+                return true;
+            }
+            else
+            {
+                print("Haven't hit a wall on my right yet");
+                return false;
+            }
+        }
+        else
+        {
+            wallRay = Physics2D.Raycast(gameObject.transform.position, Vector2.left, bodyWidth + 0.1f, layerMask);
+            if (wallRay.collider != null && wallRay.collider.gameObject.CompareTag("Solid"))
+            {
+                return true;
+            }
+            else
+            {
+                print("Haven't hit a wall on my left yet");
+                return false;
+            }
+        }
+    }
+
+    public virtual void Update()
+    {
+
+        if (InFrontOfWall() || transform.position.y < moveTo.y - 1 || transform.position.y > moveTo.y + 1)
+        {
+            moveTo = FindFurthestPoint();
+        }
+
+        if(moveTo.x > transform.position.x) { facingRight = true; }
+        else { facingRight = false; }
+
+        transform.position = Vector2.MoveTowards(transform.position, moveTo, speed * Time.deltaTime);
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawCube(moveTo, Vector3.one / 2);
     }
 }

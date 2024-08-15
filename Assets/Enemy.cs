@@ -7,6 +7,8 @@ public class Enemy : MonoBehaviour
     public int maxHealth;
     public int health;
 
+    public bool inElevator;
+
     public virtual void Start()
     {
         health = maxHealth;

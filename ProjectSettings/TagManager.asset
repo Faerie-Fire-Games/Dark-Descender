@@ -7,14 +7,15 @@ TagManager:
   - Elevator
   - Enemy
   - Solid
+  - ElevatorShaft
   layers:
   - Default
   - TransparentFX
   - Ignore Raycast
-  - 
+  - Terrain
   - Water
   - UI
-  - 
+  - GravityAndWallsOnly
   - 
   - 
   - 
