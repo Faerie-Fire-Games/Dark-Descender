@@ -14,7 +14,7 @@ public class ElevatorMovement : MonoBehaviour
     public Transform movingTo;
     private int sign;
 
-    private float disembarkTime = 1f;
+    [SerializeField]private float disembarkTime = 1.7f;
     [SerializeField] private float elevatorSpeed;
 
     public bool isMoving;
@@ -41,7 +41,7 @@ public class ElevatorMovement : MonoBehaviour
 
     public bool checkPlayerInElevator()
     {
-        if (player.transform.position.x >= gameObject.transform.position.x - 1f && player.transform.position.x <= gameObject.transform.position.x + 1f)
+        if (player.transform.position.x >= gameObject.transform.position.x - 1.3f && player.transform.position.x <= gameObject.transform.position.x + 1.3f)
         {
             if (player.transform.position.y >= gameObject.transform.position.y + 1.4f && player.transform.position.y <= gameObject.transform.position.y + 2.8f)
             {
@@ -61,8 +61,9 @@ public class ElevatorMovement : MonoBehaviour
                 PlayerMovement.playerInElevator = true;
                 // StopCoroutine(AlightingTime());
                 GameObject.FindGameObjectWithTag("Player").gameObject.transform.SetParent(transform);
-                player.transform.position = new Vector3(transform.position.x, player.transform.position.y, player.transform.position.z);
-                    
+                //player.transform.position = new Vector3(transform.position.x, player.transform.position.y, player.transform.position.z);
+                player.transform.position = new Vector3(transform.position.x, transform.position.y + 2f, player.transform.position.z);
+
             }
         }
 
