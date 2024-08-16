@@ -9,6 +9,7 @@ public class StandardMovement : MonoBehaviour
     public Vector2 moveTo;
 
     [SerializeField] private LayerMask layerMask = 3;
+    [SerializeField] private LayerMask shaftLayerMask = 7;
     private RaycastHit2D pathRay;
     private RaycastHit2D wallRay;
 
@@ -44,12 +45,12 @@ public class StandardMovement : MonoBehaviour
         }
     }
 
-    public virtual bool InFrontOfWall()
+    public virtual bool InFrontOfWall(LayerMask checkLayer)
     {
         if(facingRight)
         {
-            wallRay = Physics2D.Raycast(gameObject.transform.position, Vector2.right, bodyWidth + 0.1f, layerMask);
-            if (wallRay.collider != null && wallRay.collider.gameObject.CompareTag("Solid"))
+            wallRay = Physics2D.Raycast(gameObject.transform.position, Vector2.right, bodyWidth + 0.1f, checkLayer);
+            if (wallRay.collider != null && (wallRay.collider.gameObject.CompareTag("Solid") || wallRay.collider.gameObject.CompareTag("ElevatorShaft")))
             {
                 return true;
             }
@@ -61,7 +62,7 @@ public class StandardMovement : MonoBehaviour
         else
         {
             wallRay = Physics2D.Raycast(gameObject.transform.position, Vector2.left, bodyWidth + 0.1f, layerMask);
-            if (wallRay.collider != null && wallRay.collider.gameObject.CompareTag("Solid"))
+            if (wallRay.collider != null && (wallRay.collider.gameObject.CompareTag("Solid") || wallRay.collider.gameObject.CompareTag("ElevatorShaft")))
             {
                 return true;
             }
@@ -75,7 +76,7 @@ public class StandardMovement : MonoBehaviour
     public virtual void Update()
     {
 
-        if (InFrontOfWall() || transform.position.y < moveTo.y - 1 || transform.position.y > moveTo.y + 1)
+        if (InFrontOfWall(layerMask) || transform.position.y < moveTo.y - 1 || transform.position.y > moveTo.y + 1)
         {
             moveTo = FindFurthestPoint();
         }
@@ -83,7 +84,9 @@ public class StandardMovement : MonoBehaviour
         if(moveTo.x > transform.position.x) { facingRight = true; }
         else { facingRight = false; }
 
-        if(!gameObject.GetComponent<Enemy>().inElevator)
+
+        
+        if(!gameObject.GetComponent<Enemy>().inElevator/* && !InFrontOfWall(shaftLayerMask)*/)
         {
             transform.position = Vector2.MoveTowards(transform.position, moveTo, speed * Time.deltaTime);
         }

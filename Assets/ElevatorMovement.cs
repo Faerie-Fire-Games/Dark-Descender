@@ -12,7 +12,8 @@ public class ElevatorMovement : MonoBehaviour
     public Transform movingTo;
     private int sign;
 
-    [SerializeField]private float disembarkTime = 1.7f;
+    [SerializeField]private float disembarkTime = 1f;
+    [SerializeField] private float alightingTime = 1.2f;
     [SerializeField] private float elevatorSpeed;
 
     public bool isMoving;
@@ -84,7 +85,11 @@ public class ElevatorMovement : MonoBehaviour
         {
             //print("isMoving");
             transform.position = Vector2.MoveTowards(transform.position, movingTo.position, elevatorSpeed);
-            
+            gameObject.transform.parent.gameObject.layer = 7; // Passable Wall Layer
+        }
+        else
+        {
+            gameObject.transform.parent.gameObject.layer = 0; // Default Layer
         }
 
         if(isMoving && transform.position.y >= movingTo.position.y - 0.1f && transform.position.y <= movingTo.position.y + 0.1f)
@@ -144,11 +149,12 @@ public class ElevatorMovement : MonoBehaviour
 
     private IEnumerator AlightingTime()
     {
+        disembarking = false;
+        alighting = true;
+        yield return new WaitForSeconds(alightingTime);
         NextStop();
         isMoving = true;
         //print("Passengers may now alight");
-        alighting = true;
-        disembarking = false;
         //yield return new WaitForSeconds(0.5f);
         yield return null;
     }
