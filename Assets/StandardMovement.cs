@@ -55,7 +55,6 @@ public class StandardMovement : MonoBehaviour
             }
             else
             {
-                print("Haven't hit a wall on my right yet");
                 return false;
             }
         }
@@ -68,7 +67,6 @@ public class StandardMovement : MonoBehaviour
             }
             else
             {
-                print("Haven't hit a wall on my left yet");
                 return false;
             }
         }
@@ -85,7 +83,10 @@ public class StandardMovement : MonoBehaviour
         if(moveTo.x > transform.position.x) { facingRight = true; }
         else { facingRight = false; }
 
-        transform.position = Vector2.MoveTowards(transform.position, moveTo, speed * Time.deltaTime);
+        if(!gameObject.GetComponent<Enemy>().inElevator)
+        {
+            transform.position = Vector2.MoveTowards(transform.position, moveTo, speed * Time.deltaTime);
+        }
     }
 
     private void OnDrawGizmos()
